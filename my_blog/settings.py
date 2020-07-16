@@ -56,7 +56,7 @@ ROOT_URLCONF = 'my_blog.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,3 +132,4 @@ STATIC_ROOT = 'static'
 CRISPY_TEMPLATE_PACK="bootstrap4"
 LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = '/'
+AUTH_USER_MODEL= "blog.Accounts"
