@@ -2,8 +2,7 @@
 {% block content %}
 <form method="POST" class="form-group m-3">
     {% csrf_token %}
-	{{ form.as_p }}
-    {% comment %} <div class="form-group">
+     <div class="form-group">
         <label>Username</label>
         <input type="text" class="form-control" name="username">
         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
@@ -15,7 +14,12 @@
     <div class="form-group">
         <label>Password</label>
         <input type="password" class="form-control" name="password2">
-    </div> {% endcomment %}
+    </div>
     <button type="submit" class="btn btn-primary">Register</button>
+    {% if messages %}
+    {% for message in messages %}
+        <div class="text-success">{{message}}</div>
+    {% endfor %}
+    {% endif %}
 </form>
 {% endblock %}
