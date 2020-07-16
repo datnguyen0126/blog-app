@@ -12,11 +12,10 @@ def home(request):
     return render(request, 'blog/home.html')
 
 def register(request):
+    
     if request.method == "POST":
-        if request.POST.get('username') and request.POST.get('password1') and request.POST.get('password2'):
-            save_record = CustomUserManager()
-            save_record.create_user(request.POST.get('username'), request.POST.get('password1'))
-            save_record.save()
+        if request.POST.get('username') and request.POST.get('password1') and request.POST.get('password2'):            
+            Accounts.objects.create_user(request.POST.get('username'), request.POST.get('password1'))
             messages.success(request, "New User added!")
         return render(request, "blog/register.html")
     else:
