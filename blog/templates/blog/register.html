@@ -1,6 +1,6 @@
 {% extends "blog/base.html" %} 
 {% block content %}
-<form method="POST" class="form-group m-3">
+<form method="POST" action="." class="form-group m-3">
     {% csrf_token %}
      <div class="form-group">
         <label>Username</label>
@@ -18,7 +18,7 @@
     <button type="submit" class="btn btn-primary">Register</button>
     {% if messages %}
     {% for message in messages %}
-        <div class="text-success">{{message}}</div>
+        <div class="text-{{message.tags}}">{{message}}</div>
     {% endfor %}
     {% endif %}
 </form>
