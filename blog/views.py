@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib import auth
+from blog.models import Accounts, CustomUserManager
 
 # Create your views here.
 @login_required
@@ -12,14 +13,14 @@ def home(request):
 
 def register(request):
     if request.method == "POST":
-        print(request.POST);
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/register')
+        if request.POST.get('username') and request.POST.get('password1') and request.POST.get('password2'):
+            save_record = CustomUserManager()
+            save_record.create_user(request.POST.get('username'), request.POST.get('password1'))
+            save_record.save()
+            messages.success(request, "New User added!")
+        return render(request, "blog/register.html")
     else:
-        form = UserCreationForm()
-    return render(request, 'blog/register.html', {'form': form})
+        return render(request, 'blog/register.html')
 
 def login(request):
     if request.user.is_authenticated:
