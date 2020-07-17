@@ -1,0 +1,19 @@
+{% extends 'blog/base.html' %} 
+{% block content %}
+<form method="POST" enctype="multipart/form-data" class="was-validated">
+    {% csrf_token %}
+    <div class="form-group">
+        <label>Title</label>
+        <input type="text" class="form-control" name="title"/>
+    </div>
+    <div class="form-group">
+        <label>Description</label>
+        <textarea class="form-control" name="description" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Upload image</label>
+        <input type="file" class="form-control-file" name="image"/>
+  </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock content %}

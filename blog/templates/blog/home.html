@@ -1,4 +1,14 @@
 {% extends 'blog/base.html' %}
 {% block content %}
-    <h1>abc</h1>
+    {% for post in posts %}
+        <div class="card" style="width: 18rem;">
+            <img src="./media/{{post.image}}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{post.title}}</h5>
+                <p class="card-text">{{post.description}}</p>
+                <a href="#" class="btn btn-primary">Xem chi tiet</a>
+            </div>
+        </div>
+    {% endfor %}
+    <a type="button" class="btn btn-primary" href="{% url 'blog-create-post' %}">Create post</a>
 {% endblock content %}
