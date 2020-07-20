@@ -26,16 +26,22 @@ def about(request):
     return render(request, 'blog/about.html')
 
 @login_required(login_url='/login/')
-def blog_create(request):
+def blog_create(request, id=None):
     if request.method == "POST":
-        post =  Post()
+        post = Post()
         post.title = request.POST.get('title') 
         post.description = request.POST.get('description')
         post.image = request.FILES.get('image')
         post.save()       
         return redirect('blog-home')        
     else:
-        return render(request, 'blog/blog_create.html')
+        if id:
+            context = {
+                'post': Post.objects.get(id = id)
+            }
+            return render(request, 'blog/blog_create.html', context)            
+        else:
+            return render(request, 'blog/blog_create.html')
     
 
 def register(request):    
@@ -73,4 +79,9 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return render(request,'blog/logout.html')
+
+def blog_delete(request, id):
+    post = Post.objects.filter(id=id)
+    post.delete()
+    return redirect('blog-home')
 
