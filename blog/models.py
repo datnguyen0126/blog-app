@@ -2,11 +2,6 @@ from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 
 # Create your models here.
-class Post(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    date_created = models.DateTimeField(auto_now_add=True)
-    image = models.BinaryField()
     
 class CustomUserManager(BaseUserManager):
     """custom user manager class"""
@@ -34,6 +29,11 @@ class CustomUserManager(BaseUserManager):
 
 class Accounts(AbstractBaseUser):
     username = models.CharField(unique=True, max_length=100)
-    
     USERNAME_FIELD = 'username'
     objects = CustomUserManager()
+    
+class Post(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='images/')
