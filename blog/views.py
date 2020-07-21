@@ -4,8 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib import auth
-from blog.models import Accounts, CustomUserManager, Post
-from django.core.files.storage import FileSystemStorage
+from blog.models import Accounts, CustomUserManager, Post, Comment
+
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+from rest_framework import status
+from blog.serializers import CommentSerializer
 
 # Create your views here.
 @login_required(login_url='/login/')
@@ -24,6 +30,13 @@ def home(request):
         'posts': posts
     }
     return render(request, 'blog/home.html', context)
+
+@login_required(login_url='/login/')
+def blog_detail(request, id):
+    context = {
+        'post': Post.objects.get(id=id)
+    }
+    return render(request, 'blog/detail.html', context)
 
 @login_required(login_url='/login/')
 def about(request):
@@ -93,3 +106,46 @@ def blog_delete(request, id):
     post = Post.objects.filter(id=id)
     post.delete()
     return redirect('blog-home')
+
+
+
+# Create your views here.
+class JSONResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+        
+@csrf_exempt
+def comment_collection(request, id):
+    if request.method == 'GET':
+        comments = Comment.objects.all()
+        comment_serializer = CommentSerializer(comments, many=True)
+        return JSONResponse(comment_serializer.data)
+    elif request.method == 'POST':
+        comment_data = JSONParser().parse(request)
+        comment_serializer = CommentSerializer(data=comment_data)
+        if comment_serializer.is_valid():
+            comment_serializer.save()
+            return JSONResponse(comment_serializer.data, status=status.HTTP_201_CREATED)
+        return JSONResponse(comment_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# @csrf_exempt
+# def game_detail(request, id):
+#     try:
+#         game = Game.objects.get(id=id)
+#     except Game.DoesNotExist:
+#         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+#     if request.method == 'GET':
+#         game_serializer = GameSerializer(game)
+#         return JSONResponse(game_serializer.data)
+#     elif request.method == 'PUT':
+#         game_data = JSONParser().parse(request)
+#         game_serializer = GameSerializer(game, data=game_data)
+#         if game_serializer.is_valid():
+#             game_serializer.save()
+#             return JSONResponse({ "msg": "Update success"}, status=status.HTTP_204_NO_CONTENT)
+#         return JSONResponse(game_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     elif request.method == 'DELETE':
+#         game.delete()
+#         return HttpResponse(status=status.HTTP_204_NO_CONTENT)

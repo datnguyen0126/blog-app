@@ -43,9 +43,10 @@ class Post(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(Accounts, on_delete=models.CASCADE, default=1)
     image = models.ImageField(upload_to='images/',null=True)
-    
+
 class Comment(models.Model):
     content = models.TextField()
-    author_id = models.ForeignKey(Accounts, on_delete=models.CASCADE)
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author = models.ForeignKey(Accounts, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
+        
