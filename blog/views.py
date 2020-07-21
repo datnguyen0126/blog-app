@@ -15,6 +15,11 @@ def home(request):
         posts = Post.objects.filter(title__contains=request.POST.get("search"))
     else:
         posts = Post.objects.all()
+    for post in posts:
+        author = Accounts.objects.get_user(pk=post.author_id)
+        if post.author_id == request.user.id:
+            post.allow_to_delete = True
+        post.author_name = author.username
     context = {
         'posts': posts
     }
@@ -28,10 +33,14 @@ def about(request):
 @login_required(login_url='/login/')
 def blog_create(request, id=None):
     if request.method == "POST":
-        post = Post()
+        if id:
+            post = Post.objects.get(id=id)
+        else:
+            post = Post()
         post.title = request.POST.get('title') 
         post.description = request.POST.get('description')
         post.image = request.FILES.get('image')
+        post.author_id = request.user.id
         post.save()       
         return redirect('blog-home')        
     else:
