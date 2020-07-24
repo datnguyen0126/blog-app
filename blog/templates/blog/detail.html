@@ -1,7 +1,8 @@
 {% extends 'blog/base.html' %} 
 {% block content %}
 <div class="container">
-    <input type="hidden" name="id" id="id" value="{{post.id}}">
+    <input type="hidden" name="id" id="post-id" value="{{post.id}}">
+    <input type="hidden" name="id" id="user-id" value="{{user.id}}">
     <img src="http://{{request.get_host}}/media/{{post.image}}" class="card-img-top" style="height:400px" alt="...">
     <div class="card-body">
         <h5 class="card-title">{{post.title}}</h5>
@@ -16,14 +17,15 @@
                 <img id="user-thumbnail" class="img-thumbnail" width="35" height="35" alt=".." />
             </div>
             <div class="pl-2 pt-1 pr-2 w-100">
-                <textarea class="form-control textarea-comment"></textarea>
+                <textarea class="form-control textarea-comment" id="content"></textarea>
                 <div class="mb-2">
                     <div id="alertComment" class="text-danger text-alert-mes mb-2"></div>
                     <button class="btn btn-success" type="button" id="cmt">Comment</button>
                 </div>
-            </div>a
+            </div>
         </div>
     </form>
+    <button class="btn btn-success" type="button" id="test">Comment1</button>
     <div id="all-comment">
         <div class="mb-1 comment user">
             <div class="mr-2">

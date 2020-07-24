@@ -1,14 +1,23 @@
 from rest_framework import serializers
-from blog.models import Comment,Accounts, Post
+from blog.models import Comment, Accounts, Post
+  
+class AccountSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Accounts
+        fields = ['username']
 
 class CommentSerializer(serializers.ModelSerializer):
-    content = serializers.CharField()
-    post = serializers.ReadOnlyField(source='post.id')
-    author = serializers.ReadOnlyField(source='accounts.id')
+    author = serializers.StringRelatedField()
+
+    class Meta:      
+        model = Comment
+        fields = ['author', 'content'] 
+
+class PostSerializer(serializers.ModelSerializer):
+    #comments = serializers.StringRelatedField(many=True, read_only=True)
+    comments = CommentSerializer(many=True)
     
     class Meta:
-        model = Comment
-        fields = ['content', 'post', 'author']
-    
-    def create(self, validated_data):
-        return Comment.objects.create(**validated_data)
+        model = Post
+        fields = ['title', 'comments']  

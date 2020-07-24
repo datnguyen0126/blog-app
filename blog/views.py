@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework import status
-from blog.serializers import CommentSerializer
+from blog.serializers import PostSerializer, CommentSerializer
 
 # Create your views here.
 @login_required(login_url='/login/')
@@ -54,7 +54,10 @@ def blog_create(request, id=None):
         post.description = request.POST.get('description')
         post.image = request.FILES.get('image')
         post.author_id = request.user.id
-        post.save()       
+        if post.image:
+            post.save()
+        else:
+            post.save(update_fields=['title', 'description', 'author_id'])       
         return redirect('blog-home')        
     else:
         if id:
@@ -119,16 +122,21 @@ class JSONResponse(HttpResponse):
 @csrf_exempt
 def comment_collection(request, id):
     if request.method == 'GET':
-        comments = Comment.objects.all()
+        comments = Comment.objects.filter(post__id=id)
         comment_serializer = CommentSerializer(comments, many=True)
-        return JSONResponse(comment_serializer.data)
+        post = Post.objects.get(id=id)
+        post_serializer = PostSerializer(post)
+        return JSONResponse(post_serializer.data)
     elif request.method == 'POST':
         comment_data = JSONParser().parse(request)
-        comment_serializer = CommentSerializer(data=comment_data)
-        if comment_serializer.is_valid():
-            comment_serializer.save()
-            return JSONResponse(comment_serializer.data, status=status.HTTP_201_CREATED)
-        return JSONResponse(comment_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        author = Accounts.objects.get(id=comment_data.get('author_id'))
+        post = Post.objects.get(pk=id)
+        try:
+            comment_data = Comment.objects.create(content=comment_data.get('content'), author=author, post=post)
+        except Exception:            
+            return JSONResponse({"can not save comment!" }, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return JSONResponse({ "message": "Done"}, status=status.HTTP_201_CREATED)
     
 # @csrf_exempt
 # def game_detail(request, id):

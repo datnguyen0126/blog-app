@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
     
 class CustomUserManager(BaseUserManager):
     """custom user manager class"""
+    
     use_in_migration = True
 
     def _create_user(self, username, password, **extra_fields):
@@ -46,7 +47,13 @@ class Post(models.Model):
 
 class Comment(models.Model):
     content = models.TextField()
-    author = models.ForeignKey(Accounts, on_delete=models.CASCADE, null=True)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(Accounts, on_delete=models.CASCADE, null=True, related_name='accounts')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, related_name='comments')
     date_created = models.DateTimeField(auto_now_add=True)
+    
+    def __repr__(self):
+        return { self.author: self.content }
+    
+    def __str__(self):
+        return '%s:%s' % (self.author,self.content)
         
