@@ -132,11 +132,12 @@ def comment_collection(request, id):
         author = Accounts.objects.get(id=comment_data.get('author_id'))
         post = Post.objects.get(pk=id)
         try:
-            comment_data = Comment.objects.create(content=comment_data.get('content'), author=author, post=post)
+            #comment_data = Comment.objects.create(content=comment_data.get('content'), author=author, post=post)
+            comment_serializer = CommentSerializer(data=comment_data)
         except Exception:            
             return JSONResponse({"can not save comment!" }, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return JSONResponse({ "message": "Done"}, status=status.HTTP_201_CREATED)
+            return JSONResponse(comment_serializer.data, status=status.HTTP_201_CREATED)
     
 # @csrf_exempt
 # def game_detail(request, id):

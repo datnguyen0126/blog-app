@@ -44,6 +44,9 @@ class Post(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(Accounts, on_delete=models.CASCADE, default=1)
     image = models.ImageField(upload_to='images/',null=True)
+    
+    def __str__(self):
+        return f'{self.id}'
 
 class Comment(models.Model):
     content = models.TextField()
